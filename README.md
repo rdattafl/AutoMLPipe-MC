@@ -1,2 +1,2 @@
 # AutoMLPipe-MC
-Repository that extends the AutoMLPipe-BC machine learning pipeline by implementing multiclass ML algorithms.
+Repository that extends the AutoMLPipe-BC machine learning pipeline by implementing multiclass ML algorithms. The algorithms that will be implemented first are: Naive Bayes GaussianNB (naive_bayes.GaussianNB); Decision Tree (tree.DecisionTreeClassifier); Random Forest (ensemble_methods.RandomForestClassifier); Support Vector Machine (svm.LinearSVC); Artificial Neural Network (neural_network.MLPClassifier); and k-Nearest Neighbors (neighbors.KNeighborsClassifier). 
