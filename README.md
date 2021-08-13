@@ -1,2 +1,4 @@
 # AutoMLPipe-MC
 Repository that extends the AutoMLPipe-BC machine learning pipeline by implementing multiclass ML algorithms rather than algorithms meant for binary classification. The algorithms implemented are all those in AutoMLPipe-BC itself except Logistic Regression, Gradient Boosting, and LightGBM. Specifically, these algorithms are: Naive Bayes GaussianNB (naive_bayes.GaussianNB); Decision Tree (tree.DecisionTreeClassifier); Random Forest (ensemble_methods.RandomForestClassifier); Support Vector Machine (svm.LinearSVC); Artificial Neural Network (neural_network.MLPClassifier); k-Nearest Neighbors (neighbors.KNeighborsClassifier); XGB (XGBoost); eLCS; XCS; and ExSTraCS. 
+
+The function StatsJobMC.py also newly generates normalized confusion matrices as a metric for pipeline evaluation, as well as statistical significance tests comparing ML algorithms based on their performance on the input dataset.
