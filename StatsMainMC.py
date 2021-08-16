@@ -1,20 +1,20 @@
 """
-File: StatsMain.py
+File: StatsMainMC.py
 Authors: Ryan J. Urbanowicz, Robert Zhang
-Institution: University of Pensylvania, Philadelphia PA
+Institution: University of Pennsylvania, Philadelphia PA
 Creation Date: 6/1/2021
 License: GPL 3.0
-Description: Phase 6 of AutoMLPipe-BC - This 'Main' script manages Phase 6 run parameters, and submits job to run locally (to run serially) or on a linux computing cluster (parallelized).
-             This script runs StatsJob.py which (for a single orginal target dataset) creates summaries of ML classification evaluation statistics (means and standard deviations),
-             ROC and PRC plots (comparing CV performance in the same ML algorithm and comparing average performance between ML algorithms), model feature importance averages over CV runs,
-             boxplots comparing ML algorithms for each metric, Kruskal Wallis and Mann Whitney statistical comparsions between ML algorithms, model feature importance boxplots for each
-             algorithm, and composite feature importance plots summarizing model feature importance across all ML algorithms. This script is run on all cv results for a given original
-             target dataset from Phase 1. All 'Main' scripts in this pipeline have the potential to be extended by users to submit jobs to other parallel computing frameworks (e.g. cloud computing).
-Warnings: Designed to be run following the completion of AutoMLPipe-BC Phase 5 (ModelMain.py).
+Description: Phase 6 of AutoMLPipe-MC - This 'Main' script manages Phase 6 run parameters, and submits job to run locally (to run serially) or on a linux computing cluster (parallelized).
+             This script runs StatsJobMC.py which (for a single orginal target dataset) creates summaries of ML classification evaluation statistics (means and standard deviations),
+             model feature importance averages over CV runs, boxplots comparing ML algorithms for each metric, Kruskal Wallis and Mann Whitney statistical comparsions between ML algorithms,
+             model feature importance boxplots for each algorithm, and composite feature importance plots summarizing model feature importance across all ML algorithms.
+             This script is run on all cv results for a given original target dataset from Phase 1. All 'Main' scripts in this pipeline have the potential to be extended by users to submit jobs
+             to other parallel computing frameworks (e.g. cloud computing).
+Warnings: Designed to be run following the completion of AutoMLPipe-MC Phase 5 (ModelMain.py).
 Sample Run Command (Linux cluster parallelized with all default run parameters):
-    python StatsMain.py --out-path /Users/robert/Desktop/outputs --exp-name myexperiment1
+    python StatsMainMC.py --out-path /Users/robert/Desktop/outputs --exp-name myexperiment1
 Sample Run Command (Local/serial with with all default run parameters):
-    python StatsMain.py --out-path /Users/robert/Desktop/outputs --exp-name myexperiment1 --run-parallel False
+    python StatsMainMC.py --out-path /Users/robert/Desktop/outputs --exp-name myexperiment1 --run-parallel False
 """
 #Import required packages  ---------------------------------------------------------------------------------------------------------------------------
 import argparse
@@ -64,9 +64,6 @@ def main(argv):
     do_SVM = metadata.loc[metadata['DATA LABEL'] == 'SVM', 'VALUE'].iloc[0]
     do_ANN = metadata.loc[metadata['DATA LABEL'] == 'ANN', 'VALUE'].iloc[0]
     do_KN = metadata.loc[metadata['DATA LABEL'] == 'KN', 'VALUE'].iloc[0]
-    do_eLCS = metadata.loc[metadata['DATA LABEL'] == 'eLCS', 'VALUE'].iloc[0]
-    do_XCS = metadata.loc[metadata['DATA LABEL'] == 'XCS', 'VALUE'].iloc[0]
-    do_ExSTraCS = metadata.loc[metadata['DATA LABEL'] == 'ExSTraCS', 'VALUE'].iloc[0]
     primary_metric = metadata.loc[metadata['DATA LABEL'] == 'primary metric', 'VALUE'].iloc[0]
 
     encodedAlgos = ''
@@ -77,9 +74,6 @@ def main(argv):
     encodedAlgos = encode(do_SVM, encodedAlgos)
     encodedAlgos = encode(do_ANN, encodedAlgos)
     encodedAlgos = encode(do_KN, encodedAlgos)
-    encodedAlgos = encode(do_eLCS, encodedAlgos)
-    encodedAlgos = encode(do_XCS, encodedAlgos)
-    encodedAlgos = encode(do_ExSTraCS, encodedAlgos)
 
     if not options.do_check: #Run job submission
         # Iterate through datasets
@@ -92,9 +86,9 @@ def main(argv):
             full_path = options.output_path + "/" + options.experiment_name + "/" + dataset_directory_path
             if eval(options.run_parallel):
                 job_counter += 1
-                submitClusterJob(full_path,encodedAlgos,options.plot_FI_box,class_label,instance_label,options.output_path+'/'+options.experiment_name,cv_partitions,options.reserved_memory,options.maximum_memory,options.queue,options.plot_metric_boxplots,primary_metric,options.top_results,sig_cutoff,jupyterRun)
+                submitClusterJob(full_path,encodedAlgos,options.plot_ROC,options.plot_PRC,options.plot_FI_box,class_label,instance_label,options.output_path+'/'+options.experiment_name,cv_partitions,options.reserved_memory,options.maximum_memory,options.queue,options.plot_metric_boxplots,primary_metric,options.top_results,sig_cutoff,jupyterRun)
             else:
-                submitLocalJob(full_path,encodedAlgos,options.plot_FI_box,class_label,instance_label,cv_partitions,options.plot_metric_boxplots,primary_metric,options.top_results,sig_cutoff,jupyterRun)
+                submitLocalJob(full_path,encodedAlgos,options.plot_ROC,options.plot_PRC,options.plot_FI_box,class_label,instance_label,cv_partitions,options.plot_metric_boxplots,primary_metric,options.top_results,sig_cutoff,jupyterRun)
     else: #run job completion checks
         datasets = os.listdir(options.output_path + "/" + options.experiment_name)
         datasets.remove('logs')
@@ -123,11 +117,11 @@ def main(argv):
         print(str(job_counter)+ " jobs submitted in Phase 6")
 
 def submitLocalJob(full_path,encoded_algos,plot_FI_box,class_label,instance_label,cv_partitions,plot_metric_boxplots,primary_metric,top_results,sig_cutoff,jupyterRun):
-    """ Runs StatsJob.py locally, once for each of the original target datasets (all CV datasets analyzed at once). These runs will be completed serially rather than in parallel. """
+    """ Runs StatsJobMC.py locally, once for each of the original target datasets (all CV datasets analyzed at once). These runs will be completed serially rather than in parallel. """
     StatsJobMC.job(full_path,encoded_algos,plot_FI_box,class_label,instance_label,cv_partitions,plot_metric_boxplots,primary_metric,top_results,sig_cutoff,jupyterRun)
 
 def submitClusterJob(full_path,encoded_algos,plot_FI_box,class_label,instance_label,experiment_path,cv_partitions,reserved_memory,maximum_memory,queue,plot_metric_boxplots,primary_metric,top_results,sig_cutoff,jupyterRun):
-    """ Runs StatsJob.py once for each of the original target datasets (all CV datasets analyzed at once). Runs in parallel on a linux-based computing cluster that uses an IBM Spectrum LSF for job scheduling."""
+    """ Runs StatsJobMC.py once for each of the original target datasets (all CV datasets analyzed at once). Runs in parallel on a linux-based computing cluster that uses an IBM Spectrum LSF for job scheduling."""
     job_ref = str(time.time())
     job_name = experiment_path + '/jobs/P6_' + job_ref + '_run.sh'
     sh_file = open(job_name,'w')
