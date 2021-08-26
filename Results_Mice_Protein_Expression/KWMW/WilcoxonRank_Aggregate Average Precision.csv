@@ -1,0 +1,22 @@
+Algorithm 1,Algorithm 2,Statistic,P-Value,Sig(*)
+Naive Bayes,Decision Tree,15.0,0.232421875,
+Naive Bayes,Random Forest,2.0,0.005859375,*
+Naive Bayes,XGB,3.0,0.009765625,*
+Naive Bayes,SVM,4.0,0.013671875,*
+Naive Bayes,ANN,4.0,0.013671875,*
+Naive Bayes,K Neighbors,5.0,0.01953125,*
+Decision Tree,Random Forest,1.0,0.00390625,*
+Decision Tree,XGB,1.0,0.00390625,*
+Decision Tree,SVM,1.0,0.00390625,*
+Decision Tree,ANN,1.0,0.00390625,*
+Decision Tree,K Neighbors,6.0,0.02734375,*
+Random Forest,XGB,15.5,0.21521418051945884,
+Random Forest,SVM,12.0,0.11224606937759189,
+Random Forest,ANN,12.0,0.11224606937759189,
+Random Forest,K Neighbors,22.0,0.5745648243125437,
+XGB,SVM,26.5,0.9176864018000582,
+XGB,ANN,24.5,0.7565264064971262,
+XGB,K Neighbors,14.5,0.18457255283988294,
+SVM,ANN,22.5,0.5790997419539188,
+SVM,K Neighbors,5.0,0.020974048961404597,*
+ANN,K Neighbors,5.0,0.020974048961404597,*
